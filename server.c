@@ -54,12 +54,12 @@ void func(int sockfd){
     int BDD_c[3][clients];
     t_client BDD_id[clients];
 	t_chaine dix_op[10];
-    strcpy(BDD_id[0].iden,"julian");
-    strcpy(BDD_id[0].mdp,"1234");
-    strcpy(BDD_id[1].iden,"camille");
-    strcpy(BDD_id[1].mdp,"1234");
-    strcpy(BDD_id[2].iden,"douzet");
-    strcpy(BDD_id[2].mdp,"1234");
+    strcpy(BDD_id[0].iden,"julian\n");
+    strcpy(BDD_id[0].mdp,"1234\n");
+    strcpy(BDD_id[1].iden,"camille\n");
+    strcpy(BDD_id[1].mdp,"1234\n");
+    strcpy(BDD_id[2].iden,"douzet\n");
+    strcpy(BDD_id[2].mdp,"1234\n");
     //int op;
     int n=0;
     char numCpt[10];
@@ -211,10 +211,10 @@ void func(int sockfd){
                }
            }
        }
-            write(sockfd, buff, sizeof(buff));
-            printf("To CLient: %s\n", buff);
-            bzero(buff, MAX);
-            read(sockfd, buff, sizeof(buff));
+        write(sockfd, buff, sizeof(buff));
+        printf("To CLient: %s\n", buff);
+        bzero(buff, MAX);
+        read(sockfd, buff, sizeof(buff));
     }
 }
  // Driver function
