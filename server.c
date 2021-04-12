@@ -85,7 +85,6 @@ void func(int sockfd){
        }
        else if(k == 1){ // Demander le mdp de client 
             printf("boucle k = 1\n");
-            printf("From client: %s\n", buff);
             k = 2;
            strcpy(iden,buff);
            bzero(buff, MAX);
@@ -110,7 +109,6 @@ void func(int sockfd){
        }
        else if(k == 3){ // 1. Redemander le numero de compte 2. Demander l'operation
            strcpy(numCpt,buff);
-           printf("From client: %s\n", buff);
 		    bzero(buff, MAX);
            if(compte(iden,atoi(numCpt),BDD_c,BDD_id,3,0) == -1){
               strcpy(buff,"Ce compte n'existe pas, selectionnez un autre compte\n compte:");
