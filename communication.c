@@ -24,17 +24,17 @@ int identification(char* iden,char* mdp, t_client BDD_id[clients]){
    for(int j=0; j<clients; j++){
        if(strcmp(BDD_id[j].iden,iden) == 0){
            if(strcmp(BDD_id[j].mdp,mdp) == 0){
-               printf("identifiaction 2 \n");
+               printf("identifiaction mdp reussie \n");
                return 2 ;
            }
            else{
-               printf("identifiaction 1 \n");
+               printf("identifiaction mdp non reussie \n");
                return 1;
            }
        }
    }
   
-   printf("identifiaction 0 avec iden : (%s)\n",iden);
+   printf("identifiaction identifiant non reussie\n",iden);
         for(int j=0; j<3;j++){
             printf("Client %d\n identifiant: (%s)\t mdp: %s\n",j,BDD_id[j].iden,BDD_id[j].mdp);
         }
