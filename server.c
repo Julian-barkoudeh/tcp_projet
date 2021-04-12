@@ -60,28 +60,28 @@ void func(int sockfd){
     strcpy(BDD_id[1].mdp,"1234\n");
     strcpy(BDD_id[2].iden,"douzet\n");
     strcpy(BDD_id[2].mdp,"1234\n");
+    BDD_c[0][0] = 100;
+    BDD_c[1][0] = -1;
+    BDD_c[2][0] = -1;
     //int op;
     int n=0;
     char numCpt[10];
     char op[10];
     char somme[80];
     int x=0;
-    read(sockfd, buff, sizeof(buff)); //Lecture de message de client dans Buff
-
     for (;;) {  // Boucle à l'infini
-    printf("Debut de boucle\n");
+        printf("Debut de boucle\n");
+        bzero(buff, MAX);
+        read(sockfd, buff, sizeof(buff));
+        printf("From CLient : (%s)\n",buff);
         if (strncmp("exit", buff, 4) == 0) {
            printf("Server Exit...\n");
            break;
        }
        else if(k == 0){  //Demander l'identifiant du client 
-             printf("From client: %s\n", buff);
              k = 1;
              bzero(buff, MAX);
             strcpy(buff,"Veuillez saisir votre numero identifiant");
-            //write(sockfd, buff, sizeof(buff));
-            //printf("To CLient: %s\n", buff);
-            //bzero(buff, MAX);
        }
        else if(k == 1){ // Demander le mdp de client 
             printf("boucle k = 1\n");
@@ -90,11 +90,6 @@ void func(int sockfd){
            strcpy(iden,buff);
            bzero(buff, MAX);
            strcpy(buff,"Veuillez saisir votre mdp");
-           //while ((buff[x++] = getchar()) != '\n');
-           //x=0;
-           //write(sockfd, buff, sizeof(buff));
-           //printf("To CLient: %s\n", buff);
-           //bzero(buff, MAX);
        }
        else if(k == 2){ // 1. Redemander l'identifiant ou le mdp  2.  demander le numero de compte
             printf("boucle k = 2\n");
@@ -103,42 +98,29 @@ void func(int sockfd){
            if(identification(iden,mdp,BDD_id) == 0){
                k = 0;
                strcpy(buff,"Identifiant inexistant");
-              // write(sockfd, buff, sizeof(buff));
-               //bzero(buff, MAX);
            }
            else if(identification(iden,mdp,BDD_id) == 1){
                k = 1;
                strcpy(buff,"Mauvais mdp");
-              // write(sockfd, buff, sizeof(buff));
            }
            else if(identification(iden,mdp,BDD_id) == 2){
                k = 3;
                strcpy(buff,"Selectionnez votre numéro de compte");
-               //write(sockfd, buff, sizeof(buff));
            }
        }
-       
-
        else if(k == 3){ // 1. Redemander le numero de compte 2. Demander l'operation
            strcpy(numCpt,buff);
            printf("From client: %s\n", buff);
 		    bzero(buff, MAX);
            if(compte(iden,atoi(numCpt),BDD_c,BDD_id,3,0) == -1){
               strcpy(buff,"Ce compte n'existe pas, selectionnez un autre compte\n compte:");
-               write(sockfd, buff, sizeof(buff));
-               printf("To client: %s\n", buff);
-               bzero(buff, MAX);
            }
            else{
                k = 4;
                strcpy(buff,"operations(1:Ajout 2:Retrait 3:Solde 4:derniers 10 op\n OP :");
-               write(sockfd, buff, sizeof(buff)); 
-               printf("TO client: %s\n", buff);
-               bzero(buff, MAX);
            }
        }
        else if(k == 4){   // 1. Execution des operations 3 et 4 2. Demander le montant pour les operations 1 et 2
-           //op = atoi(buff);
            strcpy(op,buff);
 		bzero(buff, MAX);
            if(atoi(op) == 3){
@@ -153,25 +135,21 @@ void func(int sockfd){
                n++;
                strcpy(buff,"Votre solde est de ");
                strcat(buff,somme);
-               write(sockfd, buff, sizeof(buff));
            }
 		    // Affichage des 10 dernieres operations d’un client
 		    else if (atoi(op) == 4){
                 for(int i =0; i<10;i++){
                     strcpy(buff,dix_op[i].tab);
                 }
-                write(sockfd, buff, sizeof(buff));
 		    }
            else {
                strcpy(buff,"Montant en euro : ");
-               write(sockfd, buff, sizeof(buff));
                k = 5;
            }
        }
        else if(k == 5){ // Execution des operation 1 et 2
            if(atoi(op) == 1){
                compte(iden,numCpt,BDD_c,BDD_id,op,atoi(buff));
-               //somme = atoi(buff);
                strcpy(somme,buff);
                if(n==10){
                    for(int i=1;i<10;i++){
@@ -183,7 +161,6 @@ void func(int sockfd){
                n++;
                bzero(buff, MAX);
                strcpy(buff,"Montant ajouté ");
-               write(sockfd, buff, sizeof(buff));
            }
            else if(atoi(op) == 2){
                if(compte(iden,atoi(numCpt),BDD_c,BDD_id,3,0) - atoi(buff) <= 0){
@@ -191,11 +168,9 @@ void func(int sockfd){
                    strcpy(buff,"Solde insufisant de  ");
                    strcat(buff,itoa(compte(iden,numCpt,BDD_c,BDD_id,3,0),somme,10));
                    strcat(buff,"\n Entrez un montant plus petit : ");
-                   write(sockfd, buff, sizeof(buff));
                }
                else{
                    compte(iden,numCpt,BDD_c,BDD_id,2,atoi(buff));
-                   //somme = atoi(buff);
                     strcpy(somme,buff);
                    if(n==10){
                         for(int i=1;i<10;i++){
@@ -207,14 +182,12 @@ void func(int sockfd){
                    n++;
                    bzero(buff, MAX);
                    strcpy(buff,"Montant retiré");
-                   write(sockfd, buff, sizeof(buff));
                }
            }
        }
         write(sockfd, buff, sizeof(buff));
         printf("To CLient: %s\n", buff);
-        bzero(buff, MAX);
-        read(sockfd, buff, sizeof(buff));
+       
     }
 }
  // Driver function
