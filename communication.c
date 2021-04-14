@@ -61,17 +61,18 @@ int compte(char* iden, int numCpt,int BDD_c[3][clients],t_client BDD_id[clients]
 }
 //Fonction de gestion de l'historique des operations
 t_chaine DixOperations(t_chaine operation, int op,char* numCpt, char *somme){
-     strcat("Compte ",operation.tab);
-     strcat(numCpt,operation.tab);
-     strcat(": ",operation.tab);
+    strcat(operation.tab,"Compte ");
+    strcat(operation.tab,numCpt);
+    strcat(operation.tab,": ");
     if(op == 1){
-       strcat("+",operation.tab);
+       strcat(operation.tab,"+");
     }
     else if(op == 2){
-       strcat("-",operation.tab);
+       strcat(operation.tab,"-");
     }
-    strcat(somme,operation.tab);
-    strcat("\n",operation.tab);
+    strcat(operation.tab,somme);
+    strcat(operation.tab,"\n");
+
     return operation; 
 }
 char* itoa(int num, char* buffer, int base)   

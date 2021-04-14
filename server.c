@@ -104,6 +104,19 @@ void func(int client_sock)
                 strcpy(send_buff, "operations(1:Ajout 2:Retrait 3:Solde 4:derniers 10 op\n OP :");
             }
         }
+        else if (k == 31)
+        { // 1. Redemander le numero de compte 2. Demander l'operation
+            bzero(send_buff, MAX);
+            if (compte(iden, atoi(numCpt), BDD_c, BDD_id, 3, 0) == -1)
+            {
+                strcpy(send_buff, "Ce compte n'existe pas, selectionnez un autre compte\n compte:");
+            }
+            else
+            {
+                k = 4;
+                strcpy(send_buff, "operations(1:Ajout 2:Retrait 3:Solde 4:derniers 10 op\n OP :");
+            }
+        }
         else if (k == 4)
         { // 1. Execution des operations 3 et 4 2. Demander le montant pour les operations 1 et 2
             strcpy(op, buff);
@@ -155,10 +168,10 @@ void func(int client_sock)
                     n = 9;
                 }
                 dix_op[n] = DixOperations(dix_op[n], atoi(op), numCpt, somme);
-                printf("problème 2 ici\n");
                 n++;
                 bzero(send_buff, MAX);
-                strcpy(send_buff, "Montant ajouté ");
+                strcpy(send_buff, "Montant ajouté\n Sélectionnez prochaine operation : 1.Changer de client 2. Changer de compte 3. Une autre opération\n");
+                k = 6;
             }
             else if (atoi(op) == 2)
             {
@@ -184,10 +197,30 @@ void func(int client_sock)
                     dix_op[n] = DixOperations(dix_op[n], atoi(op), numCpt, somme);
                     n++;
                     bzero(send_buff, MAX);
-                    strcpy(send_buff, "Montant retiré");
+                    strcpy(send_buff, "Montant retiré\n Sélectionnez prochaine operation : 1.Changer de client 2. Changer de compte 3. Une autre opération\n");
+                    k=6;
                 }
             }
         }
+            else if(k == 6){
+                bzero(send_buff, MAX);
+                strcpy(send_buff, "Confirmez vous cette opertaion ? o|n");
+                bzero(op,10);
+                bzero(somme,80);
+                if(atoi(buff) == 1){
+                    k = 0;
+                    bzero(iden, 80);
+                    bzero(mdp, 80);
+                }
+                else if(atoi(buff) == 2){
+                    k=2;
+                    bzero(numCpt,10);
+                }
+                else if(atoi(buff) == 3){
+                     k=31;
+                }
+            printf("sending buffer : (%s)\n",send_buff);
+            }
         //bzero(buff, MAX);
         write(client_sock, send_buff, sizeof(send_buff));
         printf("To CLient: %s\n",send_buff);
