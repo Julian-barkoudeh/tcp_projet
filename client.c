@@ -1,29 +1,30 @@
-#include <netdb.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/socket.h>
-#define MAX 80
-#define PORT 8080
-#define SA struct sockaddr
+//#include <netdb.h>
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//#include <sys/socket.h>
+//#define MAX 80
+//#define PORT 8080
+//#define SA struct sockaddr
+#include <stdio.h>	//printf
+#include <string.h>	//strlen
+#include <sys/socket.h>	//socket
+#include <arpa/inet.h>	//inet_addr
+#include <unistd.h>
+/*
 void func(int sockfd)
 {
     char buff[MAX];
     int n;
     for (;;) {
         bzero(buff, sizeof(buff));
-        printf("\n Enter the string : ");
+        printf("Enter the string : ");
         n = 0;
         while ((buff[n++] = getchar()) != '\n')
             ;
         write(sockfd, buff, sizeof(buff));
-        if ((strncmp(buff, "exit", 4)) == 0) {
-            printf("Client Exit...\n");
-            break;
-        }
         bzero(buff, sizeof(buff));
         read(sockfd, buff, sizeof(buff));
-        printf("buffer après read (%s)\n",buff);
         printf("From Server : %s", buff);
         if ((strncmp(buff, "exit", 4)) == 0) {
             printf("Client Exit...\n");
@@ -31,29 +32,6 @@ void func(int sockfd)
         }
     }
 }
-/*for (;;) {
-        printf("buffer avant premier bzero : %s\n",buff);
-        bzero(buff, MAX);
-  
-        // read the message from server and copy it in buffer
-        read(sockfd, buff, sizeof(buff));
-        // print buffer which contains the server contents
-        printf("From server: %s\t To server : ", buff);
-        bzero(buff, MAX);
-        n = 0;
-        // copy server message in the buffer
-        while ((buff[n++] = getchar()) != '\n')
-            ;
-  
-        // and send that buffer to server
-        write(sockfd, buff, sizeof(buff));
-        printf("buffer après write : %s\n",buff);
-        // if msg contains "Exit" then client exit and chat ended.
-        if (strncmp("exit", buff, 4) == 0) {
-            printf("Server Exit...\n");
-            break;
-        }
-    }*/
   
 int main()
 {
@@ -88,4 +66,58 @@ int main()
   
     // close the socket
     close(sockfd);
+}*/
+int main(int argc , char *argv[])
+{
+	int sock;
+	struct sockaddr_in server;
+	char message[1000] , server_reply[2000];
+	
+	//Create socket
+	sock = socket(AF_INET , SOCK_STREAM , 0);
+	if (sock == -1)
+	{
+		printf("Could not create socket");
+	}
+	puts("Socket created");
+	
+	server.sin_addr.s_addr = inet_addr("127.0.0.1");
+	server.sin_family = AF_INET;
+	server.sin_port = htons( 8888 );
+
+	//Connect to remote server
+	if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0)
+	{
+		perror("connect failed. Error");
+		return 1;
+	}
+	
+	puts("Connected\n");
+	
+	//keep communicating with server
+	while(1)
+	{
+		printf("Enter message : ");
+		scanf("%s" , message);
+		
+		//Send some data
+		if( send(sock , message , strlen(message) , 0) < 0)
+		{
+			puts("Send failed");
+			return 1;
+		}
+		
+		//Receive a reply from the server
+		if( recv(sock , server_reply , 2000 , 0) < 0)
+		{
+			puts("recv failed");
+			break;
+		}
+		
+		puts("Server reply :");
+		puts(server_reply);
+	}
+	
+	close(sock);
+	return 0;
 }

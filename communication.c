@@ -34,10 +34,10 @@ int identification(char* iden,char* mdp, t_client BDD_id[clients]){
        }
    }
   
-   printf("identifiaction identifiant non reussie\n",iden);
-        for(int j=0; j<3;j++){
-            printf("Client %d\n identifiant: (%s)\t mdp: %s\n",j,BDD_id[j].iden,BDD_id[j].mdp);
-        }
+   printf("identifiaction identifiant non reussie avec iden :(%s)\n",iden);
+        //for(int j=0; j<3;j++){
+            //printf("Client %d\n identifiant: (%s)\t mdp: %s\n",j,BDD_id[j].iden,BDD_id[j].mdp);
+        //}
    return 0;
 }
 // Fonction d'interaction avec le compte 

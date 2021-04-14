@@ -1,238 +1,261 @@
-#include <stdio.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <sys/types.h>
+//#include <stdio.h>
+//#include <netdb.h>
+//#include <netinet/in.h>
+//#include <stdlib.h>
+//#include <string.h>
+//#include <sys/socket.h>
+//#include <sys/types.h>
 #include "communication.h"
-#define MAX 1000
-#define PORT 8080
-#define SA struct sockaddr
-#define clients 3
+#define MAX 2000
+//#define PORT 8080
+//#define SA struct sockaddr
+//#define clients 3
 
+#include <stdio.h>
+#include <string.h> //strlen
+#include <sys/socket.h>
+#include <arpa/inet.h> //inet_addr
+#include <unistd.h>    //write
+// Fonction principale
 
-
-// Fonction principale 
-void func(int sockfd){
+void func(int client_sock)
+{
     char buff[MAX];
-   int k=0;
-   char iden[80];
-   char mdp[80];
+    char send_buff[MAX];
+    int k = 0;
+    char iden[80];
+    char mdp[80];
     //int numCpt;
     //int somme;
     int BDD_c[3][clients];
     t_client BDD_id[clients];
-	t_chaine dix_op[10];
-    strcpy(BDD_id[0].iden,"julian\n");
-    strcpy(BDD_id[0].mdp,"1234\n");
-    strcpy(BDD_id[1].iden,"camille\n");
-    strcpy(BDD_id[1].mdp,"1234\n");
-    strcpy(BDD_id[2].iden,"douzet\n");
-    strcpy(BDD_id[2].mdp,"1234\n");
+    t_chaine dix_op[10];
+    strcpy(BDD_id[0].iden, "julian");
+    strcpy(BDD_id[0].mdp, "1234");
+    strcpy(BDD_id[1].iden, "camille");
+    strcpy(BDD_id[1].mdp, "1234");
+    strcpy(BDD_id[2].iden, "douzet");
+    strcpy(BDD_id[2].mdp, "1234");
     BDD_c[0][0] = 100;
     BDD_c[1][0] = -1;
     BDD_c[2][0] = -1;
     //int op;
-    int n=0;
+    int n = 0;
     char numCpt[10];
     char op[10];
     char somme[80];
-    int x=0;
-    for (;;) {  // Boucle à l'infini
+    int x = 0;
+    int read_size;
+    for (;;)
+    { // Boucle à l'infini
         printf("Debut de boucle\n");
-        bzero(buff, MAX);
-        read(sockfd, buff, sizeof(buff));
-        printf("From CLient : (%s)\n",buff);
-        if (strncmp("exit", buff, 4) == 0) {
-           printf("Server Exit...\n");
-           break;
-       }
-       else if(k == 0){  //Demander l'identifiant du client 
-             k = 1;
-             bzero(buff, MAX);
-            strcpy(buff,"Veuillez saisir votre numero identifiant");
-       }
-       else if(k == 1){ // Demander le mdp de client 
+        bzero(send_buff, MAX);
+         bzero(buff, MAX);
+        read_size = recv(client_sock, buff, 2000, 0);
+        printf("From CLient : (%s)\n", buff);
+       if (k == 0)
+        { //Demander l'identifiant du client
+            printf("boucle k = 0\n");
+            k = 1;
+            //bzero(send_buff, MAX);
+            strcpy(send_buff, "Veuillez saisir votre numero identifiant");
+             printf("Buffer = %s\n",send_buff);
+        }
+        else if (k == 1)
+        { // Demander le mdp de client
             printf("boucle k = 1\n");
             k = 2;
-           strcpy(iden,buff);
-           bzero(buff, MAX);
-           strcpy(buff,"Veuillez saisir votre mdp");
-       }
-       else if(k == 2){ // 1. Redemander l'identifiant ou le mdp  2.  demander le numero de compte
+            strcpy(iden, buff);
+            bzero(send_buff, MAX);
+            strcpy(send_buff, "Veuillez saisir votre mdp");
+        }
+        else if (k == 2)
+        { // 1. Redemander l'identifiant ou le mdp  2.  demander le numero de compte
             printf("boucle k = 2\n");
-           strcpy(mdp,buff);
-           bzero(buff, MAX);
-           if(identification(iden,mdp,BDD_id) == 0){
-               k = 0;
-               strcpy(buff,"Identifiant inexistant");
-           }
-           else if(identification(iden,mdp,BDD_id) == 1){
-               k = 1;
-               strcpy(buff,"Mauvais mdp");
-           }
-           else if(identification(iden,mdp,BDD_id) == 2){
-               k = 3;
-               strcpy(buff,"Selectionnez votre numéro de compte");
-           }
-       }
-       else if(k == 3){ // 1. Redemander le numero de compte 2. Demander l'operation
-           strcpy(numCpt,buff);
-		    bzero(buff, MAX);
-           if(compte(iden,atoi(numCpt),BDD_c,BDD_id,3,0) == -1){
-              strcpy(buff,"Ce compte n'existe pas, selectionnez un autre compte\n compte:");
-           }
-           else{
-               k = 4;
-               strcpy(buff,"operations(1:Ajout 2:Retrait 3:Solde 4:derniers 10 op\n OP :");
-           }
-       }
-       else if(k == 4){   // 1. Execution des operations 3 et 4 2. Demander le montant pour les operations 1 et 2
-           strcpy(op,buff);
-		bzero(buff, MAX);
-           if(atoi(op) == 3){
-               strcpy(somme,itoa(compte(iden,atoi(numCpt),BDD_c,BDD_id,3,0),somme,10));
-               if(n==10){
-                   for(int i=1;i<10;i++){
-                      strcpy(dix_op[i-1].tab,dix_op[i].tab);
-                   }
-                   n=9;
-               }
-               dix_op[n]= DixOperations(dix_op[n],atoi(op),numCpt,somme);
-               n++;
-               strcpy(buff,"Votre solde est de ");
-               strcat(buff,somme);
-           }
-		    // Affichage des 10 dernieres operations d’un client
-		    else if (atoi(op) == 4){
-                for(int i =0; i<10;i++){
-                    strcpy(buff,dix_op[i].tab);
-                }
-		    }
-           else {
-               strcpy(buff,"Montant en euro : ");
-               k = 5;
-           }
-       }
-       else if(k == 5){ // Execution des operation 1 et 2
-           if(atoi(op) == 1){
-               compte(iden,numCpt,BDD_c,BDD_id,op,atoi(buff));
-               strcpy(somme,buff);
-               if(n==10){
-                   for(int i=1;i<10;i++){
-                      strcpy(dix_op[i-1].tab,dix_op[i].tab);
-                   }
-                   n=9;
-               }
-               dix_op[n]= DixOperations(dix_op[n],atoi(op),numCpt,somme);
-               n++;
-               bzero(buff, MAX);
-               strcpy(buff,"Montant ajouté ");
-           }
-           else if(atoi(op) == 2){
-               if(compte(iden,atoi(numCpt),BDD_c,BDD_id,3,0) - atoi(buff) <= 0){
-                   bzero(buff, MAX);
-                   strcpy(buff,"Solde insufisant de  ");
-                   strcat(buff,itoa(compte(iden,numCpt,BDD_c,BDD_id,3,0),somme,10));
-                   strcat(buff,"\n Entrez un montant plus petit : ");
-               }
-               else{
-                   compte(iden,numCpt,BDD_c,BDD_id,2,atoi(buff));
-                    strcpy(somme,buff);
-                   if(n==10){
-                        for(int i=1;i<10;i++){
-                            strcpy(dix_op[i-1].tab,dix_op[i].tab);
-                        }
-                        n=9;
+            strcpy(mdp, buff);
+            bzero(send_buff, MAX);
+            if (identification(iden, mdp, BDD_id) == 0)
+            {
+                k = 0;
+                strcpy(send_buff, "Identifiant inexistant");
+            }
+            else if (identification(iden, mdp, BDD_id) == 1)
+            {
+                k = 1;
+                strcpy(send_buff, "Mauvais mdp");
+            }
+            else if (identification(iden, mdp, BDD_id) == 2)
+            {
+                k = 3;
+                strcpy(send_buff, "Selectionnez votre numéro de compte");
+            }
+        }
+        else if (k == 3)
+        { // 1. Redemander le numero de compte 2. Demander l'operation
+            strcpy(numCpt, buff);
+            bzero(send_buff, MAX);
+            if (compte(iden, atoi(numCpt), BDD_c, BDD_id, 3, 0) == -1)
+            {
+                strcpy(send_buff, "Ce compte n'existe pas, selectionnez un autre compte\n compte:");
+            }
+            else
+            {
+                k = 4;
+                strcpy(send_buff, "operations(1:Ajout 2:Retrait 3:Solde 4:derniers 10 op\n OP :");
+            }
+        }
+        else if (k == 4)
+        { // 1. Execution des operations 3 et 4 2. Demander le montant pour les operations 1 et 2
+            strcpy(op, buff);
+            bzero(send_buff, MAX);
+            if (atoi(op) == 3)
+            {
+                strcpy(somme, itoa(compte(iden, atoi(numCpt), BDD_c, BDD_id, 3, 0), somme, 10));
+                if (n == 10)
+                {
+                    for (int i = 1; i < 10; i++)
+                    {
+                        strcpy(dix_op[i - 1].tab, dix_op[i].tab);
                     }
-                   dix_op[n]= DixOperations(dix_op[n],atoi(op),numCpt,somme);
-                   n++;
-                   bzero(buff, MAX);
-                   strcpy(buff,"Montant retiré");
-               }
-           }
-       }
-        write(sockfd, buff, sizeof(buff));
-        printf("To CLient: %s\n", buff);
-       
+                    n = 9;
+                }
+                dix_op[n] = DixOperations(dix_op[n], atoi(op), numCpt, somme);
+                n++;
+                strcpy(send_buff, "Votre solde est de ");
+                strcat(send_buff, somme);
+            }
+            // Affichage des 10 dernieres operations d’un client
+            else if (atoi(op) == 4)
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    strcpy(send_buff, dix_op[i].tab);
+                }
+            }
+            else
+            {
+                strcpy(send_buff, "Montant en euro : ");
+                k = 5;
+            }
+        }
+        else if (k == 5)
+        { // Execution des operation 1 et 2
+            if (atoi(op) == 1)
+            {
+                compte(iden, numCpt, BDD_c, BDD_id, op, atoi(buff));
+                strcpy(somme, buff);
+                if (n == 10)
+                {
+                    for (int i = 1; i < 10; i++)
+                    {
+                        strcpy(dix_op[i - 1].tab, dix_op[i].tab);
+                    }
+                    n = 9;
+                }
+                dix_op[n] = DixOperations(dix_op[n], atoi(op), numCpt, somme);
+                n++;
+                bzero(send_buff, MAX);
+                strcpy(send_buff, "Montant ajouté ");
+            }
+            else if (atoi(op) == 2)
+            {
+                if (compte(iden, atoi(numCpt), BDD_c, BDD_id, 3, 0) - atoi(buff) <= 0)
+                {
+                    bzero(send_buff, MAX);
+                    strcpy(send_buff, "Solde insufisant de  ");
+                    strcat(send_buff, itoa(compte(iden, numCpt, BDD_c, BDD_id, 3, 0), somme, 10));
+                    strcat(send_buff, "\n Entrez un montant plus petit : ");
+                }
+                else
+                {
+                    compte(iden, numCpt, BDD_c, BDD_id, 2, atoi(buff));
+                    strcpy(somme, buff);
+                    if (n == 10)
+                    {
+                        for (int i = 1; i < 10; i++)
+                        {
+                            strcpy(dix_op[i - 1].tab, dix_op[i].tab);
+                        }
+                        n = 9;
+                    }
+                    dix_op[n] = DixOperations(dix_op[n], atoi(op), numCpt, somme);
+                    n++;
+                    bzero(send_buff, MAX);
+                    strcpy(send_buff, "Montant retiré");
+                }
+            }
+        }
+        //bzero(buff, MAX);
+        write(client_sock, send_buff, sizeof(send_buff));
+        printf("To CLient: %s\n",send_buff);
     }
-}
- // Driver function
-int main()
-{
-   int sockfd, connfd, len;
-   struct sockaddr_in servaddr, cli;
-    // socket create and verification
-   sockfd = socket(AF_INET, SOCK_STREAM, 0);
-   if (sockfd == -1) {
-       printf("socket creation failed...\n");
-       exit(0);
-   }
-   else
-       printf("Socket successfully created..\n");
-   bzero(&servaddr, sizeof(servaddr));
-    // assign IP, PORT
-   servaddr.sin_family = AF_INET;
-   servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-   servaddr.sin_port = htons(PORT);
-    // Binding newly created socket to given IP and verification
-   if ((bind(sockfd, (SA*)&servaddr, sizeof(servaddr))) != 0) {
-       printf("socket bind failed...\n");
-       exit(0);
-   }
-   else
-       printf("Socket successfully binded..\n");
-    // Now server is ready to listen and verification
-   if ((listen(sockfd, 5)) != 0) {
-       printf("Listen failed...\n");
-       exit(0);
-   }
-   else
-       printf("Server listening..\n");
-   len = sizeof(cli);
-    // Accept the data packet from client and verification
-   connfd = accept(sockfd, (SA*)&cli, &len);
-   if (connfd < 0) {
-       printf("server acccept failed...\n");
-       exit(0);
-   }
-   else
-       printf("server acccept the client...\n");
-    // Function for chatting between client and server
-   func(connfd);
-    // After chatting close the socket
-   close(sockfd);
 }
 
-/*
- void func(int sockfd)
+int main(int argc, char *argv[])
 {
-    char buff[MAX];
-    int n;
-    // infinite loop for chat
-    for (;;) {
-        //printf("buffer avant premier bzero : %s\n",buff);
-        bzero(buff, MAX);
-  
-        // read the message from client and copy it in buffer
-        read(sockfd, buff, sizeof(buff));
-        // print buffer which contains the client contents
-        printf("sockfd : %d\n",sockfd);
-        printf("From client: %s\t To client : ", buff);
-        bzero(buff, MAX);
-        n = 0;
-        // copy server message in the buffer
-        while ((buff[n++] = getchar()) != '\n')
-            ;
-  
-        // and send that buffer to client
-        write(sockfd, buff, sizeof(buff));
-        //printf("buffer après write : %s\n",buff);
-        // if msg contains "Exit" then server exit and chat ended.
-        if (strncmp("exit", buff, 4) == 0) {
-            printf("Server Exit...\n");
-            break;
-        }
+    int socket_desc, client_sock, c, read_size;
+    struct sockaddr_in server, client;
+    char client_message[2000];
+
+    //Create socket
+    socket_desc = socket(AF_INET, SOCK_STREAM, 0);
+    if (socket_desc == -1)
+    {
+        printf("Could not create socket");
     }
-}*/
+    puts("Socket created");
+
+    //Prepare the sockaddr_in structure
+    server.sin_family = AF_INET;
+    server.sin_addr.s_addr = INADDR_ANY;
+    server.sin_port = htons(8888);
+
+    //Bind
+    if (bind(socket_desc, (struct sockaddr *)&server, sizeof(server)) < 0)
+    {
+        //print the error message
+        perror("bind failed. Error");
+        return 1;
+    }
+    puts("bind done");
+
+    //Listen
+    listen(socket_desc, 3);
+
+    //Accept and incoming connection
+    puts("Waiting for incoming connections...");
+    c = sizeof(struct sockaddr_in);
+
+    //accept connection from an incoming client
+    client_sock = accept(socket_desc, (struct sockaddr *)&client, (socklen_t *)&c);
+    if (client_sock < 0)
+    {
+        perror("accept failed");
+        return 1;
+    }
+    puts("Connection accepted");
+    char message[80];
+    //Receive a message from client
+    /*
+    printf("avant le while\n");
+    while ((read_size = recv(client_sock, client_message, 2000, 0)) > 0)
+    {
+        printf("après le while\n");
+        printf("Enter message : ");
+        scanf("%s", message);
+        //Send the message back to client
+        write(client_sock, message, strlen(client_message));
+    }*/
+    func(client_sock);
+    if (read_size == 0)
+    {
+        puts("Client disconnected");
+        fflush(stdout);
+    }
+    else if (read_size == -1)
+    {
+        perror("recv failed");
+    }
+
+    return 0;
+}
