@@ -48,14 +48,13 @@ int compte(char* iden, int numCpt,int BDD_c[3][clients],t_client BDD_id[clients]
    int cpt;
   for(int i = 0; i<clients; i++){
       if(strcmp(iden,BDD_id[i].iden) == 0){
+           cpt = i;
           if(op == 1){
               BDD_c[numCpt][i] == BDD_c[numCpt][i] + somme;
           }
           else if(op == 2){
               BDD_c[numCpt][i] == BDD_c[numCpt][i] - somme;
           }
-          cpt = i;
-
       }
   }
   return BDD_c[numCpt][cpt];

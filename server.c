@@ -142,8 +142,10 @@ void func(int client_sock)
         { // Execution des operation 1 et 2
             if (atoi(op) == 1)
             {
-                compte(iden, numCpt, BDD_c, BDD_id, op, atoi(buff));
+                compte(iden, atoi(numCpt), BDD_c, BDD_id, atoi(op), atoi(buff));
+                printf("problème 0 ici\n");
                 strcpy(somme, buff);
+                printf("problème 1 ici\n");
                 if (n == 10)
                 {
                     for (int i = 1; i < 10; i++)
@@ -153,6 +155,7 @@ void func(int client_sock)
                     n = 9;
                 }
                 dix_op[n] = DixOperations(dix_op[n], atoi(op), numCpt, somme);
+                printf("problème 2 ici\n");
                 n++;
                 bzero(send_buff, MAX);
                 strcpy(send_buff, "Montant ajouté ");
