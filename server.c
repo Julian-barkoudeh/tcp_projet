@@ -126,7 +126,7 @@ void func(int client_sock)
             else
             {
                 k = 4;
-                strcpy(send_buff, "operations(1:Ajout 2:Retrait 3:Solde 4:derniers 10 op\n OP :");
+                strcpy(send_buff, "Operations : Ecrivez \n 1. pour ajoutter une somme \n 2. Pour Retirer une somme \n 3. Pour afficher votre solde \n 4. Pour afficher les dernières 10 op\n OP :");
             }
         }
         else if (k == 4)
@@ -148,8 +148,8 @@ void func(int client_sock)
                 n++;
                 strcpy(send_buff, "Votre solde est de ");
                 strcat(send_buff, somme);
-                strcat(send_buff," eruo");
-                strcat(send_buff, "\n Sélectionnez prochaine operation : 1.Changer de client\n 2. Changer de compte\n 3. Une autre opération\n");
+                strcat(send_buff," euro");
+                strcat(send_buff, "\n Sélectionnez prochaine operation : \n 1.Changer de client\n 2. Changer de compte\n 3. Une autre opération\n");
                 k = 6;
             }
             // Affichage des 10 dernieres operations d’un client
@@ -160,7 +160,7 @@ void func(int client_sock)
                 {
                     strcat(send_buff, dix_op[i].tab);
                 }
-                 strcat(send_buff, "\n Sélectionnez prochaine operation : 1.Changer de client\n 2. Changer de compte\n 3. Une autre opération\n");
+                 strcat(send_buff, "\n Sélectionnez prochaine operation : \n 1.Changer de client\n 2. Changer de compte\n 3. Une autre opération\n");
                 k = 6;
             }
             else
@@ -189,7 +189,7 @@ void func(int client_sock)
                 dix_op[n] = DixOperations(dix_op[n], atoi(op), numCpt, somme);
                 n++;
                 bzero(send_buff, MAX);
-                strcpy(send_buff, "Montant ajouté\n Sélectionnez prochaine operation : 1.Changer de client 2. Changer de compte 3. Une autre opération\n");
+                strcpy(send_buff, "Montant ajouté\n Sélectionnez prochaine operation : \n 1.Changer de client \n 2. Changer de compte \n 3. Une autre opération\n");
                 k = 6;
             }
             else if (atoi(op) == 2)
