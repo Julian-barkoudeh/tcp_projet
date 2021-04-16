@@ -93,13 +93,17 @@ int main(int argc , char *argv[])
 	}
 	
 	puts("Connected\n");
-	
+	recv(sock , server_reply , 2000 , 0);
+    puts("Server reply :");
+		puts(server_reply);
 	//keep communicating with server
 	while(1)
 	{
 		printf("Enter message : ");
 		scanf("%s" , message);
-		
+		if(strcmp(message,"exit") == 0){
+            break;
+        }
 		//Send some data
 		if( send(sock , message , strlen(message) , 0) < 0)
 		{

@@ -46,6 +46,8 @@ void func(int client_sock)
     char somme[80];
     int x = 0;
     int read_size;
+    strcpy(send_buff, "Bienvenue dans votre banque,appuyez sur n'import quelle bouton pour continuer\n");
+     write(client_sock, send_buff, sizeof(send_buff));
     for (;;)
     { // Boucle à l'infini
         printf("Debut de boucle\n");
@@ -53,7 +55,17 @@ void func(int client_sock)
          bzero(buff, MAX);
         read_size = recv(client_sock, buff, 2000, 0);
         printf("From CLient : (%s)\n", buff);
-       if (k == 0)
+       if(strcmp(buff,"exit") == 0)
+       {
+           break;
+       }
+       else if(strcmp(buff,"prev") ==0)
+       {
+           if(k>0){
+            k = k -1;
+           }
+       }
+       else if (k == 0)
         { //Demander l'identifiant du client
             printf("boucle k = 0\n");
             k = 1;
@@ -76,13 +88,13 @@ void func(int client_sock)
             bzero(send_buff, MAX);
             if (identification(iden, mdp, BDD_id) == 0)
             {
-                k = 0;
-                strcpy(send_buff, "Identifiant inexistant");
+                k = 1;
+                strcpy(send_buff, "Identifiant inexistant\n Resaisissez votre idantifaint\n");
             }
             else if (identification(iden, mdp, BDD_id) == 1)
             {
                 k = 1;
-                strcpy(send_buff, "Mauvais mdp");
+                strcpy(send_buff, "Mauvais mdp\n Resaisissez votre mdp\n");
             }
             else if (identification(iden, mdp, BDD_id) == 2)
             {
@@ -136,14 +148,20 @@ void func(int client_sock)
                 n++;
                 strcpy(send_buff, "Votre solde est de ");
                 strcat(send_buff, somme);
+                strcat(send_buff," eruo");
+                strcat(send_buff, "\n Sélectionnez prochaine operation : 1.Changer de client\n 2. Changer de compte\n 3. Une autre opération\n");
+                k = 6;
             }
             // Affichage des 10 dernieres operations d’un client
             else if (atoi(op) == 4)
             {
+                strcpy(send_buff,"Dernières dix opérations sur vos compte : \n");
                 for (int i = 0; i < 10; i++)
                 {
-                    strcpy(send_buff, dix_op[i].tab);
+                    strcat(send_buff, dix_op[i].tab);
                 }
+                 strcat(send_buff, "\n Sélectionnez prochaine operation : 1.Changer de client\n 2. Changer de compte\n 3. Une autre opération\n");
+                k = 6;
             }
             else
             {
@@ -153,6 +171,7 @@ void func(int client_sock)
         }
         else if (k == 5)
         { // Execution des operation 1 et 2
+        printf("boucle k 5\n");
             if (atoi(op) == 1)
             {
                 compte(iden, atoi(numCpt), BDD_c, BDD_id, atoi(op), atoi(buff));
@@ -175,16 +194,19 @@ void func(int client_sock)
             }
             else if (atoi(op) == 2)
             {
-                if (compte(iden, atoi(numCpt), BDD_c, BDD_id, 3, 0) - atoi(buff) <= 0)
+                if (compte(iden, atoi(numCpt), BDD_c, BDD_id, 3, 0) - atoi(buff) < 0)
                 {
                     bzero(send_buff, MAX);
                     strcpy(send_buff, "Solde insufisant de  ");
-                    strcat(send_buff, itoa(compte(iden, numCpt, BDD_c, BDD_id, 3, 0), somme, 10));
+                    printf("problème 1 ici\n");
+                    strcat(send_buff, itoa(compte(iden, atoi(numCpt), BDD_c, BDD_id, 3, 0), somme, 10));
+                    printf("problème là\n");
                     strcat(send_buff, "\n Entrez un montant plus petit : ");
                 }
-                else
+                else 
                 {
-                    compte(iden, numCpt, BDD_c, BDD_id, 2, atoi(buff));
+                    compte(iden, atoi(numCpt), BDD_c, BDD_id, 2, atoi(buff));
+                    bzero(somme, 10);
                     strcpy(somme, buff);
                     if (n == 10)
                     {
@@ -195,9 +217,10 @@ void func(int client_sock)
                         n = 9;
                     }
                     dix_op[n] = DixOperations(dix_op[n], atoi(op), numCpt, somme);
+                    
                     n++;
                     bzero(send_buff, MAX);
-                    strcpy(send_buff, "Montant retiré\n Sélectionnez prochaine operation : 1.Changer de client 2. Changer de compte 3. Une autre opération\n");
+                    strcpy(send_buff, "Montant retiré\n Sélectionnez prochaine operation : \n 1.Changer de client \n 2. Changer de compte \n 3. Une autre opération\n");
                     k=6;
                 }
             }
@@ -213,7 +236,7 @@ void func(int client_sock)
                     bzero(mdp, 80);
                 }
                 else if(atoi(buff) == 2){
-                    k=2;
+                    k=3;
                     bzero(numCpt,10);
                 }
                 else if(atoi(buff) == 3){
@@ -271,17 +294,6 @@ int main(int argc, char *argv[])
     }
     puts("Connection accepted");
     char message[80];
-    //Receive a message from client
-    /*
-    printf("avant le while\n");
-    while ((read_size = recv(client_sock, client_message, 2000, 0)) > 0)
-    {
-        printf("après le while\n");
-        printf("Enter message : ");
-        scanf("%s", message);
-        //Send the message back to client
-        write(client_sock, message, strlen(client_message));
-    }*/
     func(client_sock);
     if (read_size == 0)
     {
