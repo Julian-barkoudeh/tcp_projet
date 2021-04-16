@@ -1,3 +1,10 @@
+/* 
+Le script server.c contient :
+    - Une fonction pour le déroulement de la connexion: fonc
+    - Une fonction main
+Ces fonctions seront utilisées pour mettre en place la connexion client-serveur.
+*/
+
 //#include <stdio.h>
 //#include <netdb.h>
 //#include <netinet/in.h>
@@ -16,8 +23,13 @@
 #include <sys/socket.h>
 #include <arpa/inet.h> //inet_addr
 #include <unistd.h>    //write
-// Fonction principale
 
+/* Fonction func 
+But : Contient tout le déroulement de l'algorithme pour effectuer les opérations
+Input :
+    - int client_sock = Socket du client
+Output : void
+*/
 void func(int client_sock)
 {
     char buff[MAX];
@@ -46,7 +58,7 @@ void func(int client_sock)
     char somme[80];
     int x = 0;
     int read_size;
-    strcpy(send_buff, "Bienvenue dans votre banque,appuyez sur n'import quelle bouton pour continuer\n");
+    strcpy(send_buff, "Bienvenue dans la PolyBanque ! Appuyez sur n'importe quel bouton pour vous identifier\n");
      write(client_sock, send_buff, sizeof(send_buff));
     for (;;)
     { // Boucle à l'infini
@@ -79,7 +91,7 @@ void func(int client_sock)
             k = 2;
             strcpy(iden, buff);
             bzero(send_buff, MAX);
-            strcpy(send_buff, "Veuillez saisir votre mdp");
+            strcpy(send_buff, "Veuillez saisir votre mot de passe");
         }
         else if (k == 2)
         { // 1. Redemander l'identifiant ou le mdp  2.  demander le numero de compte
@@ -89,12 +101,12 @@ void func(int client_sock)
             if (identification(iden, mdp, BDD_id) == 0)
             {
                 k = 1;
-                strcpy(send_buff, "Identifiant inexistant\n Resaisissez votre idantifaint\n");
+                strcpy(send_buff, "Identifiant inexistant\n Resaisissez votre identifiant\n");
             }
             else if (identification(iden, mdp, BDD_id) == 1)
             {
                 k = 1;
-                strcpy(send_buff, "Mauvais mdp\n Resaisissez votre mdp\n");
+                strcpy(send_buff, "Mauvais mot de passe\n Resaisissez votre mot de passe\n");
             }
             else if (identification(iden, mdp, BDD_id) == 2)
             {
@@ -108,12 +120,12 @@ void func(int client_sock)
             bzero(send_buff, MAX);
             if (compte(iden, atoi(numCpt), BDD_c, BDD_id, 3, 0) == -1)
             {
-                strcpy(send_buff, "Ce compte n'existe pas, selectionnez un autre compte\n compte:");
+                strcpy(send_buff, "Ce compte n'existe pas, selectionnez un autre compte\n Compte:");
             }
             else
             {
                 k = 4;
-                strcpy(send_buff, "operations(1:Ajout 2:Retrait 3:Solde 4:derniers 10 op\n OP :");
+                strcpy(send_buff, "Operations possibles (1:Ajout 2:Retrait 3:Solde 4:les derniers 10 op\n OP :");
             }
         }
         else if (k == 31)
@@ -121,12 +133,12 @@ void func(int client_sock)
             bzero(send_buff, MAX);
             if (compte(iden, atoi(numCpt), BDD_c, BDD_id, 3, 0) == -1)
             {
-                strcpy(send_buff, "Ce compte n'existe pas, selectionnez un autre compte\n compte:");
+                strcpy(send_buff, "Ce compte n'existe pas, selectionnez un autre compte\n Compte:");
             }
             else
             {
                 k = 4;
-                strcpy(send_buff, "Operations : Ecrivez \n 1. pour ajoutter une somme \n 2. Pour Retirer une somme \n 3. Pour afficher votre solde \n 4. Pour afficher les dernières 10 op\n OP :");
+                strcpy(send_buff, "Operations : Ecrivez \n 1. Pour ajouter une somme \n 2. Pour retirer une somme \n 3. Pour afficher votre solde \n 4. Pour afficher les dernières 10 op\n OP :");
             }
         }
         else if (k == 4)
@@ -148,14 +160,14 @@ void func(int client_sock)
                 n++;
                 strcpy(send_buff, "Votre solde est de ");
                 strcat(send_buff, somme);
-                strcat(send_buff," euro");
-                strcat(send_buff, "\n Sélectionnez prochaine operation : \n 1.Changer de client\n 2. Changer de compte\n 3. Une autre opération\n");
+                strcat(send_buff," euro(s)");
+                strcat(send_buff, "\n Sélectionnez votre prochaine operation : \n 1.Changer de client\n 2. Changer de compte\n 3. Une autre opération\n");
                 k = 6;
             }
             // Affichage des 10 dernieres operations d’un client
             else if (atoi(op) == 4)
             {
-                strcpy(send_buff,"Dernières dix opérations sur vos compte : \n");
+                strcpy(send_buff,"Dernières dix opérations sur vos comptes : \n");
                 for (int i = 0; i < 10; i++)
                 {
                     strcat(send_buff, dix_op[i].tab);
@@ -189,7 +201,7 @@ void func(int client_sock)
                 dix_op[n] = DixOperations(dix_op[n], atoi(op), numCpt, somme);
                 n++;
                 bzero(send_buff, MAX);
-                strcpy(send_buff, "Montant ajouté\n Sélectionnez prochaine operation : \n 1.Changer de client \n 2. Changer de compte \n 3. Une autre opération\n");
+                strcpy(send_buff, "Montant ajouté ! \n Sélectionnez votre prochaine operation : \n 1.Changer de client \n 2. Changer de compte \n 3. Une autre opération\n");
                 k = 6;
             }
             else if (atoi(op) == 2)
@@ -220,7 +232,7 @@ void func(int client_sock)
                     
                     n++;
                     bzero(send_buff, MAX);
-                    strcpy(send_buff, "Montant retiré\n Sélectionnez prochaine operation : \n 1.Changer de client \n 2. Changer de compte \n 3. Une autre opération\n");
+                    strcpy(send_buff, "Montant retiré ! \n Sélectionnez votre prochaine operation : \n 1.Changer de client \n 2. Changer de compte \n 3. Une autre opération\n");
                     k=6;
                 }
             }
@@ -250,6 +262,9 @@ void func(int client_sock)
     }
 }
 
+/* Fonction main 
+But : Fonction main du projet
+*/
 int main(int argc, char *argv[])
 {
     int socket_desc, client_sock, c, read_size;
