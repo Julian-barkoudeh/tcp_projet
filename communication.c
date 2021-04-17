@@ -123,7 +123,7 @@ Input :
 Output : 
     -  char* buffer = Buffer de conversion vers le type str
 */
-char* itoa(int num, char* buffer)   
+char* itoa(int num, char* buffer,int base)   
 {  
 int current = 0;  
 if (num == 0) {  

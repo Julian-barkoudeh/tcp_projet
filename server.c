@@ -48,9 +48,15 @@ void func(int client_sock)
     strcpy(BDD_id[1].mdp, "1234");
     strcpy(BDD_id[2].iden, "douzet");
     strcpy(BDD_id[2].mdp, "1234");
-    BDD_c[0][0] = 100;
-    BDD_c[1][0] = -1;
-    BDD_c[2][0] = -1;
+    for(int i=0;i<clients;i++){
+        for(int j=0;j<3;j++){
+            BDD_c[i][j] = -1;
+        }
+    }
+     BDD_c[0][0] = 100;
+     BDD_c[1][0] = 3000;
+     BDD_c[0][1] = 500;
+     BDD_c[0][2] = 10000;
     //int op;
     int n = 0;
     char numCpt[10];

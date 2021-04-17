@@ -16,9 +16,11 @@ Vous pouvez effectuer 4 types d'opérations :
 Le serveur vous renverra les réponses à vos requêtes.
 
 ### Comment est organisé le projet ?
-Il y a 3 scripts principaux :
+Il y a 5 scripts principaux :
 - **server.c** : Contient le code utile pour la création des sockets et de la communication avec le protocole TCP
-- **client.c** : Contient le code nécessaire pour établir la connexion avec le serveur
+- **client.c** : Contient le code nécessaire pour établir la connexion avec le serveur avec le protocole TCP
+  **serverUDP.c** : Contient le code utile pour la création des sockets et de la communication avec le protocole UDP
+  **clientUDP.c** : Contient le code nécessaire pour établir la connexion avec le serveur avec le protocole UDP
 - **communication.c** : Fonctions utiles pour le script server.c
 - **communication.h** : Structures et Prototypes des fonctions utilisées dans server.c
 Il y a aussi un **makefile** pour facilité la compilation du projet
@@ -27,7 +29,8 @@ Il y a aussi un **makefile** pour facilité la compilation du projet
 A mettre a jour !
 
 1. Se placer dans le dossier du projet
-2. Faire un `make` dans un premier terminal puis executé la ligne `./a.out`
+2. Faire un `make` dans un premier terminal puis executé la ligne `./tcp.out` pour executer les codes pour protocole en TCP 
+                                                                  `./udp.out` pour executer les codes pour protocole en UDP 
 3. Ouvrir un 2e terminal et executer les deux commandes : 
     - `gcc client.c -o client`
     - `./client`
