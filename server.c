@@ -14,9 +14,7 @@ Ces fonctions seront utilisées pour mettre en place la connexion client-serveur
 //#include <sys/types.h>
 #include "communication.h"
 #define MAX 2000
-//#define PORT 8080
-//#define SA struct sockaddr
-//#define clients 3
+
 
 #include <stdio.h>
 #include <string.h> //strlen
@@ -64,7 +62,7 @@ void func(int client_sock)
     char somme[80];
     int x = 0;
     int read_size;
-    strcpy(send_buff, "Bienvenue dans la PolyBanque ! Appuyez sur n'importe quel bouton pour vous identifier\n");
+    strcpy(send_buff, "Bienvenue dans la BarkouDouzetBanque ! Appuyez sur n'importe quel bouton pour vous identifier\n");
      write(client_sock, send_buff, sizeof(send_buff));
     for (;;)
     { // Boucle à l'infini

@@ -76,8 +76,8 @@ int main(void)
 	}
 
 	bzero(send_buff, BUFLEN);
-    strcpy(send_buff, "Bienvenue dans la PolyBanque ! Appuyez sur n'importe quel bouton pour vous identifier\n");
-    sendto(s, send_buff, strlen(send_buff), 0, (struct sockaddr*) &si_other, slen);
+    //strcpy(send_buff, "Bienvenue dans la BarkouDouzetBanque! Appuyez sur n'importe quel bouton pour vous identifier\n");
+    //sendto(s, send_buff, strlen(send_buff), 0, (struct sockaddr*) &si_other, slen);
     for (;;)
     { // Boucle à l'infini
         printf("Debut de boucle\n");

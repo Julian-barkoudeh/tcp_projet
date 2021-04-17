@@ -39,7 +39,7 @@ int main(void)
 		exit(1);
 	}
     //recvfrom(s, buf, BUFLEN, 0, (struct sockaddr *) &si_other, &slen);
-    //printf("From server : %s\n",buf);
+    printf("Bienvenue dans la BarkouDouzetBanque! Appuyez sur n'importe quel bouton pour vous identifier\n");
 	while(1)
 	{
 
