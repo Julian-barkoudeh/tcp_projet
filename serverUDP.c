@@ -166,7 +166,6 @@ int main(void)
             if (atoi(op) == 3)
             {
                 bzero(somme, 10);
-                printf("Conversion de la somme : (%s)\n,",itoa(compte(iden, atoi(numCpt), BDD_c, BDD_id, 3, 0), somme, 10));
                 strcpy(somme, itoa(compte(iden, atoi(numCpt), BDD_c, BDD_id, 3, 0), somme, 10));
                 if (n == 10)
                 {

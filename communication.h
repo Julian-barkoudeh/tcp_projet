@@ -16,5 +16,7 @@ typedef  struct{
 int identification(char* iden,char* mdp, t_client BDD_id[clients]);
 int compte(char* iden, int numCpt,int BDD_c[3][clients],t_client BDD_id[clients], int op, int somme);
 t_chaine DixOperations(t_chaine operation, int op,char* numCpt, char *somme);
+void swap(char *x, char *y);
+char* reverse(char *buffer, int i, int j);
 char* itoa(int num, char* buffer, int base);
 #endif

@@ -38,15 +38,16 @@ int main(void)
 		fprintf(stderr, "inet_aton() failed\n");
 		exit(1);
 	}
-    recvfrom(s, buf, BUFLEN, 0, (struct sockaddr *) &si_other, &slen);
-    printf("From server : %s\n",buf);
+    //recvfrom(s, buf, BUFLEN, 0, (struct sockaddr *) &si_other, &slen);
+    //printf("From server : %s\n",buf);
 	while(1)
 	{
+
 		printf("Enter message : ");
 		gets(message);
-		if(strcmp(buf,"exit")){
-            break;
-        }
+		//if(strcmp(buf,"exit") == 0){
+        //    break;
+        //}
 		//send the message
 		if (sendto(s, message, strlen(message) , 0 , (struct sockaddr *) &si_other, slen)==-1)
 		{
@@ -57,10 +58,10 @@ int main(void)
 		//clear the buffer by filling null, it might have previously received data
 		memset(buf,'\0', BUFLEN);
 		//try to receive some data, this is a blocking call
-		if (recvfrom(s, buf, BUFLEN, 0, (struct sockaddr *) &si_other, &slen) == -1)
-		{
-			die("recvfrom()");
-		}
+		recvfrom(s, buf, BUFLEN, 0, (struct sockaddr *) &si_other, &slen); //== -1)
+		
+		//	die("recvfrom()");
+		//}
         
 		printf("From server : %s\n",buf);
 		puts(buf);
