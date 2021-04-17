@@ -23,7 +23,9 @@ Input :
     - char* iden = Identifiant du client
     - char* mdp = Mot de passe du client
     - t_client BDD_id[clients] = Tableau de données des clients de la banque avec leur mot de passe
-        [ DESCRIPTION FONCTIONNEMENT DU TABLEAU LIGNE COLONNES]
+                 client1  client2  client3
+            id     x1       x2      x3
+            mdp    y1       y2      y3
 Output : La fonction renvoie :
     - 0 : si l'identifiant est mauvais
     - 1 : si le mdp est mauvais
@@ -50,6 +52,13 @@ int identification(char* iden,char* mdp, t_client BDD_id[clients]){
         //}
    return 0;
 }
+int cpt(char* iden,t_client BDD_id[clients]){
+     for(int i = 0; i<clients; i++){
+         if(strcmp(iden,BDD_id[i].iden) == 0){
+             return i;
+         }
+     }
+}
 
 // Fonction d'interaction avec le compte 
 // op : 1 ajouter une somme
@@ -67,26 +76,24 @@ Input :
             compte2    y1       y2      y3
             compte3    z1       z2      z3
     - t_client BDD_id[clients] = Tableau de données des clients de la banque avec leur mot de passe
-        [ DESCRIPTION FONCTIONNEMENT DU TABLEAU LIGNE COLONNES]
+                client1  client2  client3
+            id     x1       x2      x3
+            mdp    y1       y2      y3
     - int op = Type d'opération courante
     - int somme =  Montant de l'opération en cas d'ajout ou de retrait
 Output : 
     -  BDD_c[numCpt][cpt] = Tableau de base de données mis à jour en fonction des comptes
 */
 int compte(char* iden, int numCpt, int BDD_c[3][clients], t_client BDD_id[clients], int op, int somme){
-   int cpt;
-  for(int i = 0; i<clients; i++){
-      if(strcmp(iden,BDD_id[i].iden) == 0){
-           cpt = i;
+            printf("op = %d\n",op);
           if(op == 1){
-              BDD_c[numCpt][i] == BDD_c[numCpt][i] + somme;
+              BDD_c[numCpt][cpt(iden,BDD_id)] = BDD_c[numCpt][cpt(iden,BDD_id)] + somme;
+              printf("Nouvelle somme : %d \n", BDD_c[numCpt][cpt(iden,BDD_id)]);
           }
           else if(op == 2){
-              BDD_c[numCpt][i] == BDD_c[numCpt][i] - somme;
+              BDD_c[numCpt][cpt(iden,BDD_id)] = BDD_c[numCpt][cpt(iden,BDD_id)] - somme;
           }
-      }
-  }
-  return BDD_c[numCpt][cpt];
+  return BDD_c[numCpt][cpt(iden,BDD_id)];
 }
 
 /* Fonction DixOperations

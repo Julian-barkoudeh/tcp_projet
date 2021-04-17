@@ -205,10 +205,8 @@ int main(void)
         printf("boucle k 5\n");
             if (atoi(op) == 1)
             {
-                compte(iden, atoi(numCpt), BDD_c, BDD_id, atoi(op), atoi(buff));
-                printf("problème 0 ici\n");
+                BDD_c[atoi(numCpt)][cpt(iden,BDD_id)] = compte(iden, atoi(numCpt), BDD_c, BDD_id, atoi(op), atoi(buff));
                 strcpy(somme, buff);
-                printf("problème 1 ici\n");
                 if (n == 10)
                 {
                     for (int i = 1; i < 10; i++)
@@ -236,7 +234,7 @@ int main(void)
                 }
                 else 
                 {
-                    compte(iden, atoi(numCpt), BDD_c, BDD_id, 2, atoi(buff));
+                    BDD_c[atoi(numCpt)][cpt(iden,BDD_id)] = compte(iden, atoi(numCpt), BDD_c, BDD_id, 2, atoi(buff));
                     bzero(somme, 10);
                     strcpy(somme, buff);
                     if (n == 10)
