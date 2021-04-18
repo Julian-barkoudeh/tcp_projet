@@ -1,10 +1,13 @@
 /* 
 Le script communication.c contient :
     - Une fonction pour l'identification: identification
+    - Une fonction pour récupérer les modifications dans la base de données : cpt
     - Une fonction de gestion du compte : compte
     - Une fonction pour gérer l'historique d'un client : DixOperations
+    - Deux fonctions utiles pour la fontion itoa : swap et reverse
     - Une fonction de conversion du type int vers str : itoa
-Ces fonctions seront utilisées dans le script server.c notamment.
+Ces fonctions seront utilisées dans le script server.c et serverUDP.c notamment.
+Ce sont les fonctions communes aux deux protocoles.
 */
 
 #include <stdio.h>
@@ -47,11 +50,20 @@ int identification(char* iden,char* mdp, t_client BDD_id[clients]){
    }
   
    printf("identification identifiant non reussie avec iden :(%s)\n",iden);
-        //for(int j=0; j<3;j++){
-            //printf("Client %d\n identifiant: (%s)\t mdp: %s\n",j,BDD_id[j].iden,BDD_id[j].mdp);
-        //}
    return 0;
 }
+
+/* Fonction cpt
+But : Récupérer les modifications dans la base de données 
+Input :
+    - char* iden = Identifiant du client
+    - t_client BDD_id[clients] = Tableau de données des clients de la banque avec leur mot de passe
+                client1  client2  client3
+            id     x1       x2      x3
+            mdp    y1       y2      y3
+Output : 
+    -  i = Indice du tableau de base de données où il y a eu des modifications
+*/
 int cpt(char* iden,t_client BDD_id[clients]){
      for(int i = 0; i<clients; i++){
          if(strcmp(iden,BDD_id[i].iden) == 0){
@@ -60,10 +72,6 @@ int cpt(char* iden,t_client BDD_id[clients]){
      }
 }
 
-// Fonction d'interaction avec le compte 
-// op : 1 ajouter une somme
-//      2 Retirer une somme
-//      3 Afiicher le solde
 /* Fonction compte
 But : Fonction d'interaction avec le compte 
 Input :
@@ -122,20 +130,12 @@ t_chaine DixOperations(t_chaine operation, int op,char* numCpt, char *somme){
     return operation; 
 }
 
-/* Fonction itoa 
-But : Gerer l'historique des opérations d'un client
-Input :
-    - int num = Nombre à convertir
-    - char* buffer = Buffer de conversion vers le type str
-Output : 
-    -  char* buffer = Buffer de conversion vers le type str
-*/
-// inline function to swap two numbers
+// Fonction utile pour la fonction itoa
 void swap(char *x, char *y) {
     char t = *x; *x = *y; *y = t;
 }
  
-// function to reverse buffer[i..j]
+// Fonction utile pour la fonction itoa
 char* reverse(char *buffer, int i, int j)
 {
     while (i < j)
@@ -143,6 +143,16 @@ char* reverse(char *buffer, int i, int j)
  
     return buffer;
 }
+
+/* Fonction itoa 
+But : Gerer l'historique des opérations d'un client
+Input :
+    - int num = Nombre à convertir
+    - char* buffer = Buffer de conversion vers le type str
+    - int base : base de conversion (decimal, hexadecimal etc)
+Output : 
+    -  char* buffer = Buffer de conversion vers le type str
+*/
 char* itoa(int value, char* buffer, int base)
 {
     // invalid input

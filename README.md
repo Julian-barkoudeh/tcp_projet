@@ -19,15 +19,13 @@ Le serveur vous renverra les réponses à vos requêtes.
 Il y a 5 scripts principaux :
 - **server.c** : Contient le code utile pour la création des sockets et de la communication avec le protocole TCP
 - **client.c** : Contient le code nécessaire pour établir la connexion avec le serveur avec le protocole TCP
-  **serverUDP.c** : Contient le code utile pour la création des sockets et de la communication avec le protocole UDP
-  **clientUDP.c** : Contient le code nécessaire pour établir la connexion avec le serveur avec le protocole UDP
+- **serverUDP.c** : Contient le code utile pour la création des sockets et de la communication avec le protocole UDP
+- **clientUDP.c** : Contient le code nécessaire pour établir la connexion avec le serveur avec le protocole UDP
 - **communication.c** : Fonctions utiles pour le script server.c
 - **communication.h** : Structures et Prototypes des fonctions utilisées dans server.c
 Il y a aussi un **makefile** pour facilité la compilation du projet
 
 ### Comment exécuter le code ?
-A mettre a jour !
-
 1. Se placer dans le dossier du projet
 2. Faire un `make` dans un premier terminal puis executé la ligne `./tcp.out` pour executer les codes pour protocole en TCP 
                                                                   `./udp.out` pour executer les codes pour protocole en UDP 
@@ -54,7 +52,7 @@ mot de passe : 1234
     - compte 3 : ...
 
 - client 3 :
-identifiant : douzet
+identifiant : maria
 mot de passe : 1234
 état des comptes :
     - compte 1 : ...
@@ -62,4 +60,10 @@ mot de passe : 1234
     - compte 3 : ...
 
 ### Les étapes à suivre pour effectuer une action 
-A faire
+1. Envoyer un premier message pour initialiser la communication
+2. S'identifier : La banque vous demande d'abord votre identifiant puis votre mot de passe
+3. Choisissez l'opération que vous souhaitez réaliser
+4. Si tout se passe bien vous pouvez choisir une nouvelle action
+5. ENvoyez **exit** lorsque vous voulez terminer la communication
+
+#### A bientot chez la BarkouDouzetBanque !

@@ -2,25 +2,16 @@
 Le script server.c contient :
     - Une fonction pour le déroulement de la connexion: fonc
     - Une fonction main
-Ces fonctions seront utilisées pour mettre en place la connexion client-serveur.
+Ces fonctions seront utilisées pour mettre en place la connexion client-serveur avec le protocole TCP
 */
 
-//#include <stdio.h>
-//#include <netdb.h>
-//#include <netinet/in.h>
-//#include <stdlib.h>
-//#include <string.h>
-//#include <sys/socket.h>
-//#include <sys/types.h>
 #include "communication.h"
-#define MAX 2000
-
-
 #include <stdio.h>
 #include <string.h> //strlen
 #include <sys/socket.h>
 #include <arpa/inet.h> //inet_addr
 #include <unistd.h>    //write
+#define MAX 2000
 
 /* Fonction func 
 But : Contient tout le déroulement de l'algorithme pour effectuer les opérations
@@ -30,75 +21,81 @@ Output : void
 */
 void func(int client_sock)
 {
+    //Initialisation des variables nécesaires
     char buff[MAX];
     char send_buff[MAX];
     int k = 0;
     char iden[80];
     char mdp[80];
-    //int numCpt;
-    //int somme;
     int BDD_c[3][clients];
     t_client BDD_id[clients];
     t_chaine dix_op[10];
+
+    // On initialise les 3 clients et leurs comptes respectifs
     strcpy(BDD_id[0].iden, "julian");
     strcpy(BDD_id[0].mdp, "1234");
     strcpy(BDD_id[1].iden, "camille");
     strcpy(BDD_id[1].mdp, "1234");
-    strcpy(BDD_id[2].iden, "douzet");
+    strcpy(BDD_id[2].iden, "maria");
     strcpy(BDD_id[2].mdp, "1234");
     for(int i=0;i<clients;i++){
         for(int j=0;j<3;j++){
             BDD_c[i][j] = -1;
         }
     }
-     BDD_c[0][0] = 100;
-     BDD_c[1][0] = 3000;
-     BDD_c[0][1] = 500;
-     BDD_c[0][2] = 10000;
-    //int op;
+    BDD_c[0][0] = 100;
+    BDD_c[1][0] = 3000;
+    BDD_c[0][1] = 500;
+    BDD_c[0][2] = 10000;
+
     int n = 0;
     char numCpt[10];
     char op[10];
     char somme[80];
     int x = 0;
     int read_size;
+    // Premier message de bienvenue pour initialiser dans connexion
     strcpy(send_buff, "Bienvenue dans la BarkouDouzetBanque ! Appuyez sur n'importe quel bouton pour vous identifier\n");
-     write(client_sock, send_buff, sizeof(send_buff));
+    write(client_sock, send_buff, sizeof(send_buff));
     for (;;)
-    { // Boucle à l'infini
+    { // Boucle infinie
         printf("Debut de boucle\n");
         bzero(send_buff, MAX);
-         bzero(buff, MAX);
+        bzero(buff, MAX);
         read_size = recv(client_sock, buff, 2000, 0);
         printf("From CLient : (%s)\n", buff);
-       if(strcmp(buff,"exit") == 0)
-       {
+        if(strcmp(buff,"exit") == 0)
+        {
            break;
-       }
-       else if(strcmp(buff,"prev") ==0)
-       {
-           if(k>0){
-            k = k -1;
-           }
-       }
-       else if (k == 0)
-        { //Demander l'identifiant du client
-            printf("boucle k = 0\n");
-            k = 1;
-            //bzero(send_buff, MAX);
-            strcpy(send_buff, "Veuillez saisir votre numero identifiant");
-             printf("Buffer = %s\n",send_buff);
         }
+        else if(strcmp(buff,"prev") ==0)
+        {
+            if(k>0){
+                k = k -1;
+            }
+        }
+        // Demander l'identifiant du client
+        else if (k == 0)
+        { 
+            printf("Boucle k = 0\n");
+            k = 1;
+            strcpy(send_buff, "Veuillez saisir votre numero identifiant");
+            printf("Buffer = %s\n",send_buff);
+        }
+        // Demander le mot de passe du client
         else if (k == 1)
-        { // Demander le mdp de client
+        {
             printf("boucle k = 1\n");
             k = 2;
             strcpy(iden, buff);
             bzero(send_buff, MAX);
             strcpy(send_buff, "Veuillez saisir votre mot de passe");
         }
+        // Deux possibilités :
+        // 1. Redemander l'identifiant ou le mdp si l'identification s'est mal déroulée
+        // 2.  demander le numero de compte si l'identification est un succès
         else if (k == 2)
-        { // 1. Redemander l'identifiant ou le mdp  2.  demander le numero de compte
+        {
             printf("boucle k = 2\n");
             strcpy(mdp, buff);
             bzero(send_buff, MAX);
@@ -118,8 +115,12 @@ void func(int client_sock)
                 strcpy(send_buff, "Selectionnez votre numéro de compte");
             }
         }
-        else if (k == 3)
-        { // 1. Redemander le numero de compte 2. Demander l'operation
+        // Deux possibilités :
+        // 1. Redemander le numero de compte s'il était mauvais
+        // 2. Demander l'operation à effectuer si le compte est existant
+        else if 
+        (k == 3)
+        {
             strcpy(numCpt, buff);
             bzero(send_buff, MAX);
             if (compte(iden, atoi(numCpt), BDD_c, BDD_id, 3, 0) == -1)
@@ -132,8 +133,9 @@ void func(int client_sock)
                 strcpy(send_buff, "Operations possibles (1:Ajout 2:Retrait 3:Solde 4:les derniers 10 op\n OP :");
             }
         }
+        // Quasiment le même cas que k=3 mais on ne l'utilise pas au même endroit, simplement pour une question de logique dans les messages
         else if (k == 31)
-        { // 1. Redemander le numero de compte 2. Demander l'operation
+        {
             bzero(send_buff, MAX);
             if (compte(iden, atoi(numCpt), BDD_c, BDD_id, 3, 0) == -1)
             {
@@ -145,8 +147,11 @@ void func(int client_sock)
                 strcpy(send_buff, "Operations : Ecrivez \n 1. Pour ajouter une somme \n 2. Pour retirer une somme \n 3. Pour afficher votre solde \n 4. Pour afficher les dernières 10 op\n OP :");
             }
         }
+        // Deux étapes :
+        // 1. Execution des operations 3 et 4 (cad afficher le solde ou les 10 dernières op)
+        // 2. Demander le montant pour les operations 1 et 2 (en cas d'ajout ou de retrait)
         else if (k == 4)
-        { // 1. Execution des operations 3 et 4 2. Demander le montant pour les operations 1 et 2
+        {
             strcpy(op, buff);
             bzero(send_buff, MAX);
             if (atoi(op) == 3)
@@ -185,15 +190,15 @@ void func(int client_sock)
                 k = 5;
             }
         }
+        // Execution des operation 1 et 2 (ajout ou retrait)
         else if (k == 5)
-        { // Execution des operation 1 et 2
+        {
         printf("boucle k 5\n");
+            // Si c'est un ajout
             if (atoi(op) == 1)
             {
                 BDD_c[atoi(numCpt)][cpt(iden,BDD_id)] = compte(iden, atoi(numCpt), BDD_c, BDD_id, atoi(op), atoi(buff));
-                printf("problème 0 ici\n");
                 strcpy(somme, buff);
-                printf("problème 1 ici\n");
                 if (n == 10)
                 {
                     for (int i = 1; i < 10; i++)
@@ -208,15 +213,14 @@ void func(int client_sock)
                 strcpy(send_buff, "Montant ajouté ! \n Sélectionnez votre prochaine operation : \n 1.Changer de client \n 2. Changer de compte \n 3. Une autre opération\n");
                 k = 6;
             }
+            // Si c'est un retrait
             else if (atoi(op) == 2)
             {
                 if (compte(iden, atoi(numCpt), BDD_c, BDD_id, 3, 0) - atoi(buff) < 0)
                 {
                     bzero(send_buff, MAX);
                     strcpy(send_buff, "Solde insufisant de  ");
-                    printf("problème 1 ici\n");
                     strcat(send_buff, itoa(compte(iden, atoi(numCpt), BDD_c, BDD_id, 3, 0), somme, 10));
-                    printf("problème là\n");
                     strcat(send_buff, "\n Entrez un montant plus petit : ");
                 }
                 else 
@@ -260,14 +264,13 @@ void func(int client_sock)
                 }
             printf("sending buffer : (%s)\n",send_buff);
             }
-        //bzero(buff, MAX);
         write(client_sock, send_buff, sizeof(send_buff));
-        printf("To CLient: %s\n",send_buff);
+        printf("To Client: %s\n",send_buff);
     }
 }
 
 /* Fonction main 
-But : Fonction main du projet
+But : Fonction main du projet coté serveur avec TCP
 */
 int main(int argc, char *argv[])
 {
@@ -275,7 +278,7 @@ int main(int argc, char *argv[])
     struct sockaddr_in server, client;
     char client_message[2000];
 
-    //Create socket
+    //Création du socket TCP
     socket_desc = socket(AF_INET, SOCK_STREAM, 0);
     if (socket_desc == -1)
     {
@@ -283,28 +286,28 @@ int main(int argc, char *argv[])
     }
     puts("Socket created");
 
-    //Prepare the sockaddr_in structure
+    //Préparation de la structure sockaddr_in
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = INADDR_ANY;
     server.sin_port = htons(8888);
 
-    //Bind
+    //Etablissement de la liaison
     if (bind(socket_desc, (struct sockaddr *)&server, sizeof(server)) < 0)
     {
-        //print the error message
+        // Message d'erreur
         perror("bind failed. Error");
         return 1;
     }
     puts("bind done");
 
-    //Listen
+    //Mode écoute
     listen(socket_desc, 3);
 
-    //Accept and incoming connection
+    //En attente d'une connexion entrante
     puts("Waiting for incoming connections...");
     c = sizeof(struct sockaddr_in);
 
-    //accept connection from an incoming client
+    // Acceptation  d'une connexion entrante d'un client
     client_sock = accept(socket_desc, (struct sockaddr *)&client, (socklen_t *)&c);
     if (client_sock < 0)
     {
