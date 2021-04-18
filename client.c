@@ -41,7 +41,7 @@ int main(int argc , char *argv[])
     }
     
     puts("Connected\n");
-    recv(sock , server_reply , 2000 , 0);
+    	sock , server_reply , 2000 , 0);
     puts("Server reply :");
         puts(server_reply);
     // Pour garder la connexion avec le serveur

@@ -61,7 +61,9 @@ int main(void)
         {
             die("sendto()");
         }
-        
+        if(strcmp(message,"exit") == 0){
+			break; 
+		}
         // Reception de la réponse et affichage de cette dernière
         // On vide le buffer de la potentielle precedente réponse
         memset(buf,'\0', BUFLEN);

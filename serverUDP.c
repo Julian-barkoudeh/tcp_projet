@@ -140,7 +140,6 @@ int main(void)
             }
             else if (identification(iden, mdp, BDD_id) == 1)
             {
-                k = 1;
                 strcpy(send_buff, "Mauvais mot de passe\n Resaisissez votre mot de passe\n");
             }
             else if (identification(iden, mdp, BDD_id) == 2)
