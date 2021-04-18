@@ -13,8 +13,8 @@ Vous pouvez effectuer 4 types d'opérations :
     2. Faire un **retrait** : Debiter un montant dans le compte voulu
     3. Obtenir le **solde** de votre compte.
     4. Obtenir les 10 dernières **opérations** du client
-## Veuillez saisir le numéoro de l'opération dans la case de message destiné au serveur afin que votre demande soit prise en compte. 
-## Par exemple, ecrire "3", pour afficher votre solde
+### Veuillez saisir le numéro de l'opération dans la case de message destiné au serveur afin que votre demande soit prise en compte. 
+Par exemple, ecrire "3", pour afficher votre solde. 
 Le serveur vous renverra les réponses à vos requêtes.
 
 ### Comment est organisé le projet ?
