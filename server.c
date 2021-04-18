@@ -80,7 +80,6 @@ void func(int client_sock)
             printf("Boucle k = 0\n");
             k = 1;
             strcpy(send_buff, "Veuillez saisir votre numero identifiant");
-            printf("Buffer = %s\n",send_buff);
         }
         // Demander le mot de passe du client
         else if (k == 1)
@@ -130,7 +129,7 @@ void func(int client_sock)
             else
             {
                 k = 4;
-                strcpy(send_buff, "Operations possibles (1:Ajout 2:Retrait 3:Solde 4:les derniers 10 op\n OP :");
+                strcpy(send_buff, "Operations : Ecrivez \n 1. Pour ajouter une somme \n 2. Pour retirer une somme \n 3. Pour afficher votre solde \n 4. Pour afficher les dernières 10 op\n OP :");
             }
         }
         // Quasiment le même cas que k=3 mais on ne l'utilise pas au même endroit, simplement pour une question de logique dans les messages
@@ -247,22 +246,23 @@ void func(int client_sock)
         }
             else if(k == 6){
                 bzero(send_buff, MAX);
-                strcpy(send_buff, "Confirmez vous cette opertaion ? o|n");
                 bzero(op,10);
                 bzero(somme,80);
                 if(atoi(buff) == 1){
+                    strcpy(send_buff, "Confirmez vous cette opertaion ? o|n");
                     k = 0;
                     bzero(iden, 80);
                     bzero(mdp, 80);
                 }
                 else if(atoi(buff) == 2){
+                    strcpy(send_buff, "Veuillez saisire le numéro de votre compte\n");
                     k=3;
                     bzero(numCpt,10);
                 }
                 else if(atoi(buff) == 3){
+                    strcpy(send_buff, "Confirmez vous cette opertaion ? o|n");
                      k=31;
                 }
-            printf("sending buffer : (%s)\n",send_buff);
             }
         write(client_sock, send_buff, sizeof(send_buff));
         printf("To Client: %s\n",send_buff);

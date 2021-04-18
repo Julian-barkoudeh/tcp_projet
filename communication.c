@@ -35,7 +35,6 @@ Output : La fonction renvoie :
     - 2 : si tout va bien
 */
 int identification(char* iden,char* mdp, t_client BDD_id[clients]){
-    printf("identification\n");
    for(int j=0; j<clients; j++){
        if(strcmp(BDD_id[j].iden,iden) == 0){
            if(strcmp(BDD_id[j].mdp,mdp) == 0){
@@ -93,10 +92,8 @@ Output :
     -  BDD_c[numCpt][cpt] = Tableau de base de données mis à jour en fonction des comptes
 */
 int compte(char* iden, int numCpt, int BDD_c[3][clients], t_client BDD_id[clients], int op, int somme){
-            printf("op = %d\n",op);
           if(op == 1){
               BDD_c[numCpt][cpt(iden,BDD_id)] = BDD_c[numCpt][cpt(iden,BDD_id)] + somme;
-              printf("Nouvelle somme : %d \n", BDD_c[numCpt][cpt(iden,BDD_id)]);
           }
           else if(op == 2){
               BDD_c[numCpt][cpt(iden,BDD_id)] = BDD_c[numCpt][cpt(iden,BDD_id)] - somme;

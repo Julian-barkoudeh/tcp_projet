@@ -282,24 +282,25 @@ int main(void)
             }
         }
             // Demander de confirmer la nouvelle operation
-            else if(k == 6){
+           else if(k == 6){
                 bzero(send_buff, MAX);
-                strcpy(send_buff, "Confirmez vous cette operation ? o|n");
                 bzero(op,10);
                 bzero(somme,80);
                 if(atoi(buff) == 1){
+                    strcpy(send_buff, "Confirmez vous cette opertaion ? o|n");
                     k = 0;
                     bzero(iden, 80);
                     bzero(mdp, 80);
                 }
                 else if(atoi(buff) == 2){
+                    strcpy(send_buff, "Veuillez saisire le numéro de votre compte\n");
                     k=3;
                     bzero(numCpt,10);
                 }
                 else if(atoi(buff) == 3){
-                    k=31;
+                    strcpy(send_buff, "Confirmez vous cette opertaion ? o|n");
+                     k=31;
                 }
-            printf("sending buffer : (%s)\n",send_buff);
             }
         sendto(s, send_buff, strlen(send_buff), 0, (struct sockaddr*) &si_other, slen);
         printf("To Client: %s\n",send_buff);
